@@ -38,7 +38,7 @@ class Configuration(object):
     @classmethod
     def parse(cls, argv):
         "parse command line options and load configuration"
-        config = cls()
+        config = cls('empty')
         options = {}
         return config, options
 

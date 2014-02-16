@@ -1,5 +1,6 @@
 from nose import tools
 
+from rehab import main
 from rehab import Git, Repository
 from rehab import Configuration
 
@@ -46,4 +47,13 @@ def test_config_with_data_contains_data():
     conf = Configuration('with-data', CONFIG)
     tools.assert_equals('with-data', conf.config)
     tools.assert_equals(CONFIG, conf.data)
+
+def test_config_parse_load_some_config_object_and_create_options_dict():
+    config, options = Configuration.parse(['rehab', 'option'])
+    tools.assert_is_instance(config, Configuration)
+    tools.assert_equals({}, options)
+
+def test_main_just_run_it_so_there_is_no_syntax_error():
+    main(['rehab', 'option'])
+    main()
 
