@@ -1,8 +1,8 @@
 from nose import tools
 
-from rehab import main
-from rehab import Git, Repository
-from rehab import Configuration
+from rehab.main import main
+from rehab.main import Git, Repository
+from rehab.main import Configuration
 
 # basic rehab configuration, default values will be pretty similar
 CONFIG = {
