@@ -50,7 +50,7 @@ class Repository(object):
 class Git(Repository):
     "git vcs abstraction"
 
-    def __init__(self, name, config, branch):
+    def __init__(self, name, config, branch, directory=None):
         self.name = name
         self.branch = branch
         self.config = config
@@ -59,6 +59,7 @@ class Git(Repository):
         self.directory = d = name.split('/')[-1]
         if d.endswith('.git'):
             self.directory = d[:-4]
+        self.directory = directory or self.directory
 
         self.cwd = self.config.repodir / self.directory
 

@@ -84,6 +84,12 @@ class TestBaseRepository(TestCase):
     def test_repo_create_by_tag_proper_object(self):
         repo = Repository.by_tag('a-default', 'name', config=self.config)
         tools.assert_is_instance(repo, Repository)
+        repo = Repository.by_tag('git', 'git@repo/dir.git', self.config, 'branch')
+        tools.assert_is_instance(repo, Git)
+        tools.assert_equals('dir', repo.directory)
+        repo = Repository.by_tag('git', 'git@repo/dir.git', self.config, 'branch', 'directory')
+        tools.assert_is_instance(repo, Git)
+        tools.assert_equals('directory', repo.directory)
 
     def test_repo_run_update_hooks_iterates_over_all_given_files(self):
         conf = Configuration(configuration={
