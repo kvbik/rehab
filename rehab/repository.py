@@ -1,3 +1,5 @@
+from paver.easy import sh
+
 class Repository(object):
     def __init__(self, name, *args, **kwargs):
         self.name = name
@@ -43,8 +45,12 @@ class Git(Repository):
         self.branch = branch
 
         self.url = name
-        self.directory = name.split('/')[-1]
+        self.directory = d = name.split('/')[-1]
+        if d.endswith('.git'):
+            self.directory = d[:-4]
 
     def run_command(self, command, config):
         cwd = config.repodir / self.directory
+        out = sh(command, cwd=cwd, capture=True, ignore_error=False)
+        return out.strip()
 
