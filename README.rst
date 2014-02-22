@@ -3,12 +3,14 @@ rehab - manage your dependencies
 ================================
 
 rehab is a very simple tool, that runs a set of commands
-only if a given file has been changed since last run
+only if a given file has been changed since the last run
 
 install
 =======
 
-only: ``pip install rehab``
+only::
+
+  pip install rehab
 
 configuration
 =============
@@ -39,5 +41,7 @@ crate a configuration file::
   with open('/etc/my-rehab.yml', 'w') as f:
     f.write(yaml.dump(EXAMPLE_CONFIG))
 
-and call: ``rehab update -c /etc/my-rehab.yml -d /var/my-rehab.yml``
+and call::
+
+  rehab update -c /etc/my-rehab.yml -d /var/my-rehab.yml
 
