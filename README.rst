@@ -8,7 +8,7 @@ only if a given file has been changed since last run
 install
 =======
 
-only: `pip install rehab`
+only: ``pip install rehab``
 
 configuration
 =============
@@ -22,15 +22,15 @@ crate a configuration file::
 
       # list of repositories: type, name and other params
       'repositories': [
-          ('git', 'git@github.com:kvbik/rehab.git', 'master'),
+          ['git', 'git@github.com:kvbik/rehab.git', 'master'],
       ],
 
       # run commands for each file which has changed since the last run
       'updatehooks': {
           'git@github.com:kvbik/rehab.git': [
-              ('requirements.txt', 'pip install -r requirements.txt'),
-              ('requirements.txt', 'python setup.py develop'),
-              ('setup.py', 'python setup.py develop'),
+              ['requirements.txt', 'pip install -r requirements.txt'],
+              ['requirements.txt', 'python setup.py develop'],
+              ['setup.py', 'python setup.py develop'],
           ],
       },
   }
@@ -39,5 +39,5 @@ crate a configuration file::
   with open('/etc/my-rehab.yml', 'w') as f:
     f.write(yaml.dump(EXAMPLE_CONFIG))
 
-and call: `rehab -c /etc/my-rehab.yml -d /var/my-rehab.yml`
+and call: ``rehab update -c /etc/my-rehab.yml -d /var/my-rehab.yml``
 
