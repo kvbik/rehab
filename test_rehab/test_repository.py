@@ -36,23 +36,23 @@ class TestGitRepository(TestCase):
         tools.assert_true(self.origin.exists())
 
     def test_repository_properties(self):
-        git = Git(self.origin, 'master')
+        git = Git(self.origin, config=self.config, branch='master')
         tools.assert_equals(self.origin, git.name)
         tools.assert_equals(self.origin, git.url)
         tools.assert_equals('repo', git.directory)
 
     def test_repository_run_command_output(self):
-        git = Git(self.origin, 'master')
-        tools.assert_equals(str(self.repo), git.run_command('pwd', self.config))
+        git = Git(self.origin, config=self.config, branch='master')
+        tools.assert_equals(str(self.repo), git.run_command('pwd'))
 
 def test_repo_object_and_its_properties():
-    repo = Repository('name')
+    repo = Repository('name', config=None)
     tools.assert_equals('name', repo.name)
     tools.assert_equals('1', repo.current_version)
     tools.assert_true(repo.has_changed('any-file-name.txt'))
 
 def test_repo_create_by_tag_proper_object():
-    repo = Repository.by_tag('a-default', 'name')
+    repo = Repository.by_tag('a-default', 'name', config=None)
     tools.assert_is_instance(repo, Repository)
 
 def test_repo_run_update_hooks_iterates_over_all_given_files():
@@ -60,8 +60,8 @@ def test_repo_run_update_hooks_iterates_over_all_given_files():
     conf.data.update({'updatehooks': {
         'REPO': [('file.txt', 'echo file.txt has changed')],
     }})
-    repo = Repository('REPO')
-    repo.run_update_hooks(conf)
+    repo = Repository('REPO', config=conf)
+    repo.run_update_hooks()
 
 def test_repo_loop_iterates_over_repositories_from_config():
     conf = Configuration('conf')

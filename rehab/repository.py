@@ -1,17 +1,18 @@
 from paver.easy import sh
 
 class Repository(object):
-    def __init__(self, name, *args, **kwargs):
+    def __init__(self, name, config, *args, **kwargs):
         self.name = name
+        self.config = config
 
     @classmethod
-    def by_tag(cls, tag, name, *args):
+    def by_tag(cls, tag, name, config, *args):
         "create repository of proper class given by tag"
         classes = {
             'git': Git,
         }
         C = classes.get(tag, cls)
-        return C(name, *args)
+        return C(name, config, *args)
 
     @classmethod
     def loop(cls, config, options):
@@ -19,7 +20,7 @@ class Repository(object):
         for i in config.data.get('repositories', []):
             tag, name = i[:2]
             args = i[2:]
-            yield cls.by_tag(tag, name, *args)
+            yield cls.by_tag(tag, name, config, *args)
 
     @property
     def current_version(self):
@@ -28,29 +29,31 @@ class Repository(object):
     def has_changed(self, file_path):
         return True
 
-    def run_command(self, command, config):
+    def run_command(self, command):
         pass
 
-    def run_update_hooks(self, config):
+    def run_update_hooks(self):
         "take all the hooks and run commands if given file has changed"
-        for file_path, command in config.get_updatehooks(self.name):
+        updatehooks = self.config.get_updatehooks(self.name)
+        for file_path, command in updatehooks:
             if self.has_changed(file_path):
-                self.run_command(command, config)
+                self.run_command(command)
 
 class Git(Repository):
     "git vcs abstraction"
 
-    def __init__(self, name, branch):
+    def __init__(self, name, config, branch):
         self.name = name
         self.branch = branch
+        self.config = config
 
         self.url = name
         self.directory = d = name.split('/')[-1]
         if d.endswith('.git'):
             self.directory = d[:-4]
 
-    def run_command(self, command, config):
-        cwd = config.repodir / self.directory
+    def run_command(self, command):
+        cwd = self.config.repodir / self.directory
         out = sh(command, cwd=cwd, capture=True, ignore_error=False)
         return out.strip()
 

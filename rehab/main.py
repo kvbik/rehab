@@ -9,7 +9,7 @@ def main(argv=None):
     config, options = Configuration.parse(argv)
 
     for r in Repository.loop(config, options):
-        r.run_update_hooks(config)
+        r.run_update_hooks()
 
 if __name__ == '__main__':
     main()
