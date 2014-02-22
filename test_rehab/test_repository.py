@@ -22,9 +22,11 @@ class TestGitRepository(TestCase):
         extract_git(cls.temp)
         cls.repo = cls.temp / 'repos' / 'repo'
         cls.origin = cls.temp / 'repos' / 'repo.git'
-        cls.config = Configuration('/etc/rehab.yml')
-        cls.config.data = {
-            'repodir': str(cls.temp / 'repos'),
+
+    def setUp(self):
+        self.config = Configuration('/etc/rehab.yml')
+        self.config.data = {
+            'repodir': str(self.temp / 'repos'),
         }
 
     @classmethod
@@ -44,6 +46,30 @@ class TestGitRepository(TestCase):
     def test_repository_run_command_output(self):
         git = Git(self.origin, config=self.config, branch='master')
         tools.assert_equals(str(self.repo), git.run_command('pwd'))
+
+    def test_repository_current_version(self):
+        git = Git(self.origin, config=self.config, branch='master')
+        tools.assert_equals('f1f3f67f703d5b05e63ee01221d74b78633d4414', git.current_version)
+
+    def test_every_file_is_changed_if_there_is_no_previous_commits(self):
+        git = Git(self.origin, config=self.config, branch='master')
+        tools.assert_true(git.has_changed('first-file'))
+        tools.assert_true(git.has_changed('second-file'))
+
+    def test_every_file_is_changed_since_the_initial_empty_commit(self):
+        self.config.data['previous_versions'] = {
+            str(self.origin): 'f917730de114db30e79e362cdd3ce39974f5ba84',
+        }
+        git = Git(self.origin, config=self.config, branch='master')
+        tools.assert_true(git.has_changed('first-file'))
+        tools.assert_true(git.has_changed('second-file'))
+
+    def test_files_without_change_did_not_change(self):
+        self.config.data['previous_versions'] = {
+            str(self.origin): 'de1e71336916848680292588b02d173d10fdfdbf',
+        }
+        git = Git(self.origin, config=self.config, branch='master')
+        tools.assert_false(git.has_changed('second-file'))
 
 def test_repo_object_and_its_properties():
     repo = Repository('name', config=None)

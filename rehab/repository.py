@@ -52,6 +52,18 @@ class Git(Repository):
         if d.endswith('.git'):
             self.directory = d[:-4]
 
+    @property
+    def current_version(self):
+        cmd = 'git log --format=format:%H -n1'
+        return self.run_command(cmd)
+
+    def has_changed(self, file_path):
+        previous_version = self.config.get_previous_version(self.name)
+        if previous_version is None:
+            return True
+        cmd = 'git diff {v}.. {f}'.format(v=previous_version, f=file_path)
+        return bool(self.run_command(cmd))
+
     def run_command(self, command):
         cwd = self.config.repodir / self.directory
         out = sh(command, cwd=cwd, capture=True, ignore_error=False)

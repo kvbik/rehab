@@ -20,6 +20,11 @@ EXAPMLE_CONFIG = {
             ('setup.py', 'python setup.py develop'),
         ],
     },
+
+    # versions stored from previous update run
+    'previous_versions': {
+        'git@github.com:kvbik/python-baf.git': 'f917730de114db30e79e362cdd3ce39974f5ba84',
+    },
 }
 
 DUMMY_CONFIG = {

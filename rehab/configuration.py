@@ -27,3 +27,7 @@ class Configuration(object):
         updatehooks = self.data['updatehooks']
         return updatehooks.get(name, [])
 
+    def get_previous_version(self, name):
+        previous_versions = self.data.get('previous_versions', {})
+        return previous_versions.get(name)
+
