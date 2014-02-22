@@ -25,12 +25,22 @@ def main(argv=None):
 def update(options):
     "update repositories and run hooks there"
     config = ConfigurationFile.parse(options)
+    # no ugly debug prints
+    tasks.environment.quiet = True
+
+    def _print(out):
+        for f,c,o in out:
+            x = '{}: {}'.format(f, c)
+            print(x)
+            print('='*len(x))
+            print(o if o else '.. not changed')
+            print()
 
     for r in Repository.loop(config, options):
         if config.do_update():
             r.update()
         if config.do_run():
-            r.run_update_hooks()
+            _print(r.run_update_hooks())
         config.set_previous_version(r.name, r.current_version)
 
     config.save_data_file()

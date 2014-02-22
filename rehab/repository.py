@@ -38,10 +38,14 @@ class Repository(object):
 
     def run_update_hooks(self):
         "take all the hooks and run commands if given file has changed"
+        out = []
         updatehooks = self.config.get_updatehooks(self.name)
         for file_path, command in updatehooks:
+            line = [file_path, command, None]
             if self.has_changed(file_path):
-                self.run_command(command)
+                line[-1] = self.run_command(command)
+            out.append(line)
+        return out
 
 class Git(Repository):
     "git vcs abstraction"
