@@ -34,7 +34,7 @@ EXAMPLE_CONFIG = {
 }
 
 # we use yaml as a config parser
-DUMMY_CONFIG = """
+CONFIG = """
 repodir: /var/repos
 repositories:
 - [test, a-repo]
@@ -42,6 +42,8 @@ updatehooks:
   a-repo:
   - [a-file, do something]
   - [another-file, do something else]
+"""
+DATA = """
 previous_versions:
   a-repo: '10'
   another-repo: '123'
@@ -54,7 +56,9 @@ class TestMain(TestCase):
         self.data_file = self.temp / 'rehab_data.yml'
 
         with open(self.config_file, 'w') as f:
-            f.write(DUMMY_CONFIG)
+            f.write(CONFIG)
+        with open(self.data_file, 'w') as f:
+            f.write(DATA)
 
         RepositoryTesting.register()
 
