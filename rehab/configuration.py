@@ -4,8 +4,8 @@ class Configuration(object):
     "configuration wrapper"
     _CONFIG = {}
 
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, name):
+        self.name = name
         self.data = {}
 
     def load_data(self):
