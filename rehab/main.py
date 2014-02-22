@@ -44,6 +44,7 @@ def update(options):
         config.set_previous_version(r.name, r.current_version)
 
     config.save_data_file()
+up = update
 
 if __name__ == '__main__':
     main()
