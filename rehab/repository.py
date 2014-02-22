@@ -20,25 +20,20 @@ class Repository(object):
             yield cls.by_tag(tag, name, *args)
 
     @property
-    def updatehooks(self):
-        # TODO: take values from config
-        return [('file.txt', 'echo file.txt has changed')]
-
-    @property
     def current_version(self):
         return '1'
 
     def has_changed(self, file_path):
         return True
 
-    def run_command(self, command):
+    def run_command(self, command, config):
         pass
 
-    def run_update_hooks(self):
-        "tak all the hooks and run commands if given file has changed"
-        for file_path, command in self.updatehooks:
+    def run_update_hooks(self, config):
+        "take all the hooks and run commands if given file has changed"
+        for file_path, command in config.get_updatehooks(self.name):
             if self.has_changed(file_path):
-                self.run_command(command)
+                self.run_command(command, config)
 
 class Git(Repository):
     "git vcs abstraction"
@@ -46,4 +41,10 @@ class Git(Repository):
     def __init__(self, name, branch):
         self.name = name
         self.branch = branch
+
+        self.url = name
+        self.directory = name.split('/')[-1]
+
+    def run_command(self, command, config):
+        cwd = config.repodir / self.directory
 

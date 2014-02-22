@@ -1,3 +1,5 @@
+from paver.easy import path
+
 class Configuration(object):
     "configuration wrapper"
     _CONFIG = {}
@@ -16,4 +18,12 @@ class Configuration(object):
         config.load_data()
         options = {}
         return config, options
+
+    @property
+    def repodir(self):
+        return path(self.data['repodir'])
+
+    def get_updatehooks(self, name):
+        updatehooks = self.data['updatehooks']
+        return updatehooks.get(name, [])
 
