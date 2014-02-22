@@ -5,14 +5,15 @@ from paver.easy import path
 
 class Configuration(object):
     "configuration wrapper"
-    def __init__(self, config_file=None, data_file=None, configuration=None):
+    def __init__(self, config_file=None, data_file=None, configuration=None, data=None):
         self.configuration = copy.deepcopy(configuration) if configuration else {}
+        self.data = copy.deepcopy(data) if data else {}
 
         self.config_file = config_file if config_file else self.default_config_file()
         self.configuration.update(self.load_config_file())
 
         self.data_file = data_file if data_file else self.get_data_file()
-        self.data = self.load_data_file()
+        self.data.update(self.load_data_file())
 
     def is_virtualenv(self):
         # FIXME: detect venv
@@ -83,7 +84,7 @@ class ConfigurationFile(Configuration):
         return self.load_yaml(self.config_file)
 
     def load_data_file(self):
-        return self.load_yaml(self.config_file)
+        return self.load_yaml(self.data_file)
 
     def save_data_file(self):
         with open(self.data_file, 'w') as f:
