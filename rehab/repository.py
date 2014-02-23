@@ -6,6 +6,7 @@ class Repository(object):
     def __init__(self, name, config, *args, **kwargs):
         self.name = name
         self.config = config
+        self.cwd = self.config.repodir
 
     @classmethod
     def by_tag(cls, tag, name, config, *args):
@@ -28,11 +29,12 @@ class Repository(object):
     def has_changed(self, file_path):
         return True
 
-    def run_command(self, command):
-        pass
-
     def update(self):
         pass
+
+    def run_command(self, command):
+        out = sh(command, cwd=self.cwd, capture=True, ignore_error=False)
+        return out.strip()
 
     def run_update_hooks(self):
         "take all the hooks and run commands if given file has changed"
@@ -54,6 +56,8 @@ class Git(Repository):
         if d.endswith('.git'):
             self.directory = d[:-4]
 
+        self.cwd = self.config.repodir / self.directory
+
     @property
     def current_version(self):
         cmd = 'git log --format=format:%H -n1'
@@ -65,11 +69,6 @@ class Git(Repository):
             return True
         cmd = 'git diff {v}.. {f}'.format(v=previous_version, f=file_path)
         return bool(self.run_command(cmd))
-
-    def run_command(self, command):
-        cwd = self.config.repodir / self.directory
-        out = sh(command, cwd=cwd, capture=True, ignore_error=False)
-        return out.strip()
 
 Repository.CLASSES['git'] = Git
 

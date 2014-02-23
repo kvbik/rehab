@@ -9,6 +9,7 @@ from rehab.repository import Git, Repository
 from rehab.configuration import Configuration
 
 import test_rehab
+from test_rehab.utils import RepositoryTesting
 
 def extract_git(where):
     tar = tarfile.open(path(test_rehab.__file__).dirname() / "repos.tar")
@@ -70,33 +71,40 @@ class TestGitRepository(TestCase):
         git = Git(self.origin, config=self.config, branch='master')
         tools.assert_false(git.has_changed('second-file'))
 
-def test_repo_object_and_its_properties():
-    repo = Repository('name', config=None)
-    tools.assert_equals('name', repo.name)
-    tools.assert_equals('1', repo.current_version)
-    tools.assert_true(repo.has_changed('any-file-name.txt'))
+class TestBaseRepository(TestCase):
+    def setUp(self):
+        self.config = Configuration('conf', {'repodir': '/var/repos'})
 
-def test_repo_create_by_tag_proper_object():
-    repo = Repository.by_tag('a-default', 'name', config=None)
-    tools.assert_is_instance(repo, Repository)
+    def test_repo_object_and_its_properties(self):
+        repo = Repository('name', config=self.config)
+        tools.assert_equals('name', repo.name)
+        tools.assert_equals('1', repo.current_version)
+        tools.assert_true(repo.has_changed('any-file-name.txt'))
 
-def test_repo_run_update_hooks_iterates_over_all_given_files():
-    conf = Configuration('conf', {
-        'updatehooks': {
-            'REPO': [('file.txt', 'echo file.txt has changed')],
-        },
-    })
-    repo = Repository('REPO', config=conf)
-    repo.run_update_hooks()
+    def test_repo_create_by_tag_proper_object(self):
+        repo = Repository.by_tag('a-default', 'name', config=self.config)
+        tools.assert_is_instance(repo, Repository)
 
-def test_repo_loop_iterates_over_repositories_from_config():
-    conf = Configuration('conf', {
-        'repositories': [
-            ('git', 'git@github.com:kvbik/rehab.git', 'master'),
-        ],
-    })
-    repo = list(Repository.loop(conf, {}))[0]
-    tools.assert_is_instance(repo, Git)
-    tools.assert_equals('git@github.com:kvbik/rehab.git', repo.name)
-    tools.assert_equals('master', repo.branch)
+    def test_repo_run_update_hooks_iterates_over_all_given_files(self):
+        conf = Configuration('conf', {
+            'repodir': '/var/repos',
+            'updatehooks': {
+                'REPO': [('file.txt', 'echo file.txt has changed')],
+            },
+        })
+        repo = RepositoryTesting('REPO', config=conf)
+        repo.run_update_hooks()
+        tools.assert_equals(['echo file.txt has changed'], repo.commands)
+
+    def test_repo_loop_iterates_over_repositories_from_config(self):
+        conf = Configuration('conf', {
+            'repodir': '/var/repos',
+            'repositories': [
+                ('git', 'git@github.com:kvbik/rehab.git', 'master'),
+            ],
+        })
+        repo = list(Repository.loop(conf, {}))[0]
+        tools.assert_is_instance(repo, Git)
+        tools.assert_equals('git@github.com:kvbik/rehab.git', repo.name)
+        tools.assert_equals('master', repo.branch)
 

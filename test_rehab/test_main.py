@@ -1,10 +1,13 @@
 from nose import tools
+from unittest import TestCase
 
 from paver.easy import path
 import tempfile
 
 from rehab.main import main
 from rehab.configuration import ConfigurationFile
+
+from test_rehab.utils import RepositoryTesting
 
 # basic rehab configuration, default values will be pretty similar
 EXAMPLE_CONFIG = {
@@ -33,8 +36,9 @@ EXAMPLE_CONFIG = {
 
 # we use yaml as a config parser
 DUMMY_CONFIG = """
+repodir: /var/repos
 repositories:
-- [base, a-repo]
+- [test, a-repo]
 updatehooks:
   a-repo:
   - [a-file, do something]
@@ -44,22 +48,25 @@ previous_versions:
   another-repo: '123'
 """
 
-def test_main_just_run_it_so_there_is_no_syntax_error():
-    # TODO: use TestCase and SetUp/TearDown
-    temp = path(tempfile.mkdtemp(prefix='test_rehab_'))
-    name = temp / 'rehab.yml'
-    with open(name, 'w') as f:
-        f.write(DUMMY_CONFIG)
+class TestMain(TestCase):
+    def setUp(self):
+        self.temp = path(tempfile.mkdtemp(prefix='test_rehab_'))
+        self.name = self.temp / 'rehab.yml'
+        with open(self.name, 'w') as f:
+            f.write(DUMMY_CONFIG)
 
-    ConfigurationFile._D['name'] = name
+        ConfigurationFile._D['name'] = self.name
+        RepositoryTesting.register()
 
-    main(['rehab.py', 'update'])
+    def test_main_just_run_it_so_there_is_no_syntax_error(self):
+        main(['rehab.py', 'update'])
 
-    # previous commits has changed
-    f = open(name)
-    tools.assert_in("a-repo: '1'", f.read())
-    f.close()
+        # previous commits has changed
+        with open(self.name) as f:
+            tools.assert_in("a-repo: '1'", f.read())
 
-    del ConfigurationFile._D['name']
-    temp.rmtree()
+    def tearDown(self):
+        del ConfigurationFile._D['name']
+        RepositoryTesting.unregister()
+        self.temp.rmtree()
 
