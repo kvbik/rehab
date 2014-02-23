@@ -1,4 +1,4 @@
 /rehab.egg-info/
-/test_rehab/htmlcov/
+/htmlcov/
 /.coverage
 *.py[co]
