@@ -27,11 +27,6 @@ EXAMPLE_CONFIG = {
             ('setup.py', 'python setup.py develop'),
         ],
     },
-
-    # versions stored from previous update run
-    'previous_versions': {
-        'git@github.com:kvbik/rehab.git': 'f917730de114db30e79e362cdd3ce39974f5ba84',
-    },
 }
 
 # we use yaml as a config parser
