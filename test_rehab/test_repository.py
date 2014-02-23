@@ -92,11 +92,11 @@ def test_repo_run_update_hooks_iterates_over_all_given_files():
 def test_repo_loop_iterates_over_repositories_from_config():
     conf = Configuration('conf', {
         'repositories': [
-            ('git', 'git@github.com:kvbik/python-baf.git', 'master'),
+            ('git', 'git@github.com:kvbik/rehab.git', 'master'),
         ],
     })
     repo = list(Repository.loop(conf, {}))[0]
     tools.assert_is_instance(repo, Git)
-    tools.assert_equals('git@github.com:kvbik/python-baf.git', repo.name)
+    tools.assert_equals('git@github.com:kvbik/rehab.git', repo.name)
     tools.assert_equals('master', repo.branch)
 

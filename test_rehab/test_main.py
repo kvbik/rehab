@@ -2,24 +2,23 @@ from nose import tools
 
 from paver.easy import path
 import tempfile
-import yaml
 
 from rehab.main import main
 from rehab.configuration import ConfigurationFile
 
 # basic rehab configuration, default values will be pretty similar
-EXAPMLE_CONFIG = {
+EXAMPLE_CONFIG = {
     # where your repositories will checkout to
     'repodir': '/var/repos/',
 
     # list of repositories: type, name and other params
     'repositories': [
-        ('git', 'git@github.com:kvbik/python-baf.git', 'master'),
+        ('git', 'git@github.com:kvbik/rehab.git', 'master'),
     ],
 
     # run commands for each file which has changed since the last run
     'updatehooks': {
-        'git@github.com:kvbik/python-baf.git': [
+        'git@github.com:kvbik/rehab.git': [
             ('requirements.txt', 'pip install -r requirements.txt'),
             ('requirements.txt', 'python setup.py develop'),
             ('setup.py', 'python setup.py develop'),
@@ -28,7 +27,7 @@ EXAPMLE_CONFIG = {
 
     # versions stored from previous update run
     'previous_versions': {
-        'git@github.com:kvbik/python-baf.git': 'f917730de114db30e79e362cdd3ce39974f5ba84',
+        'git@github.com:kvbik/rehab.git': 'f917730de114db30e79e362cdd3ce39974f5ba84',
     },
 }
 
