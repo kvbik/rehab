@@ -10,14 +10,17 @@ class ConfigurationNoFile(object):
         self.data = {}
 
     @classmethod
-    def parse(cls, argv):
+    def default(cls):
+        # FIXME: use venv as default and fallback to /etc/
+        return cls._D.get('name', '/etc/rehab.yml')
+
+    @classmethod
+    def parse(cls, options):
         "parse command line options and load configuration"
-        options = {'argv': argv,}
-        # FIXME: use venv default of the one from argv
-        name = cls._D['name']
+        name = options.get('config', cls.default())
         config = cls(name)
         config.load()
-        return config, options
+        return config
 
     def load(self):
         pass

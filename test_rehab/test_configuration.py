@@ -7,11 +7,10 @@ def test_config_object_and_its_properties():
     tools.assert_equals('/etc/rehab.yml', conf.name)
     tools.assert_equals({}, conf.data)
 
-def test_config_parse_load_some_config_object_and_create_options_dict():
+def test_config_parse_load_some_config_object():
     ConfigurationNoFile._D['name'] = '/etc/rehab.yml'
-    config, options = ConfigurationNoFile.parse(['rehab', 'option'])
+    config = ConfigurationNoFile.parse({})
     tools.assert_is_instance(config, ConfigurationNoFile)
-    tools.assert_equals({'argv': ['rehab', 'option']}, options)
     del ConfigurationNoFile._D['name']
 
 def test_config_set_current_version():

@@ -55,8 +55,7 @@ def test_main_just_run_it_so_there_is_no_syntax_error():
 
     Configuration._D['name'] = name
 
-    main(['rehab', 'option'])
-    main()
+    main(['rehab.py', 'update'])
 
     # previous commits has changed
     f = open(name)
