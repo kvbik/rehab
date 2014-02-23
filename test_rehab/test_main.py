@@ -1,5 +1,10 @@
-from rehab.main import main
+from nose import tools
 
+from paver.easy import path
+import tempfile
+import yaml
+
+from rehab.main import main
 from rehab.configuration import Configuration
 
 # basic rehab configuration, default values will be pretty similar
@@ -27,21 +32,37 @@ EXAPMLE_CONFIG = {
     },
 }
 
-DUMMY_CONFIG = {
-    'repositories': [
-        ('base', 'a-repo'),
-    ],
-    'updatehooks': {
-        'a-repo': [
-            ('a-file', 'do something'),
-            ('another-file', 'do something else'),
-        ],
-    },
-}
+# we use yaml as a config parser
+DUMMY_CONFIG = """
+repositories:
+- [base, a-repo]
+updatehooks:
+  a-repo:
+  - [a-file, do something]
+  - [another-file, do something else]
+previous_versions:
+  a-repo: '10'
+  another-repo: '123'
+"""
 
 def test_main_just_run_it_so_there_is_no_syntax_error():
-    Configuration._CONFIG.update(DUMMY_CONFIG)
+    # TODO: use TestCase and SetUp/TearDown
+    temp = path(tempfile.mkdtemp(prefix='test_rehab_'))
+    name = temp / 'rehab.yml'
+    f = open(name, 'w')
+    f.write(DUMMY_CONFIG)
+    f.close()
+
+    Configuration._D['name'] = name
+
     main(['rehab', 'option'])
     main()
-    Configuration._CONFIG.clear()
+
+    # previous commits has changed
+    f = open(name)
+    tools.assert_in("a-repo: '1'", f.read())
+    f.close()
+
+    del Configuration._D['name']
+    temp.rmtree()
 

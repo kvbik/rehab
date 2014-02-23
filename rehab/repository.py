@@ -32,6 +32,9 @@ class Repository(object):
     def run_command(self, command):
         pass
 
+    def update(self):
+        pass
+
     def run_update_hooks(self):
         "take all the hooks and run commands if given file has changed"
         updatehooks = self.config.get_updatehooks(self.name)
