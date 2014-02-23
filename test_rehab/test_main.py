@@ -80,6 +80,10 @@ class TestMain(TestCase):
         main()
         self._test_main_just_run_it_so_there_is_no_syntax_error()
 
+    def test_main_help_just_a_check_it_works(self):
+        sys.argv = ['rehab']
+        main()
+
     def tearDown(self):
         sys.argv = self.argv
         RepositoryTesting.unregister()
