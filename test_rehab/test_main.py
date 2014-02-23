@@ -49,9 +49,8 @@ def test_main_just_run_it_so_there_is_no_syntax_error():
     # TODO: use TestCase and SetUp/TearDown
     temp = path(tempfile.mkdtemp(prefix='test_rehab_'))
     name = temp / 'rehab.yml'
-    f = open(name, 'w')
-    f.write(DUMMY_CONFIG)
-    f.close()
+    with open(name, 'w') as f:
+        f.write(DUMMY_CONFIG)
 
     Configuration._D['name'] = name
 

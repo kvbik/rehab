@@ -45,14 +45,12 @@ class Configuration(ConfigurationNoFile):
     "configuration wrapper that can store data in file"
 
     def load(self):
-        f = open(self.name)
-        d = yaml.load(f.read())
-        self.data.update(d)
-        f.close()
+        with open(self.name) as f:
+            d = yaml.load(f.read())
+            self.data.update(d)
 
     def dump(self):
-        d = yaml.dump(self.data)
-        f = open(self.name, 'w')
-        f.write(d)
-        f.close()
+        with open(self.name, 'w') as f:
+            d = yaml.dump(self.data)
+            f.write(d)
 
