@@ -1,6 +1,8 @@
 from paver.easy import sh
 
 class Repository(object):
+    CLASSES = {}
+
     def __init__(self, name, config, *args, **kwargs):
         self.name = name
         self.config = config
@@ -8,10 +10,7 @@ class Repository(object):
     @classmethod
     def by_tag(cls, tag, name, config, *args):
         "create repository of proper class given by tag"
-        classes = {
-            'git': Git,
-        }
-        C = classes.get(tag, cls)
+        C = cls.CLASSES.get(tag, cls)
         return C(name, config, *args)
 
     @classmethod
@@ -71,4 +70,6 @@ class Git(Repository):
         cwd = self.config.repodir / self.directory
         out = sh(command, cwd=cwd, capture=True, ignore_error=False)
         return out.strip()
+
+Repository.CLASSES['git'] = Git
 
