@@ -1,13 +1,13 @@
 import yaml
 from paver.easy import path
 
-class ConfigurationNoFile(object):
+class Configuration(object):
     "configuration wrapper"
     _D = {}
 
-    def __init__(self, name):
+    def __init__(self, name, data=None):
         self.name = name
-        self.data = {}
+        self.data = {} if data is None else data.copy()
 
     @classmethod
     def default(cls):
@@ -41,7 +41,7 @@ class ConfigurationNoFile(object):
         self.data.setdefault('previous_versions', {})
         self.data['previous_versions'][name] = current_version
 
-class Configuration(ConfigurationNoFile):
+class ConfigurationFile(Configuration):
     "configuration wrapper that can store data in file"
 
     def load(self):

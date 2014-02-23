@@ -24,10 +24,9 @@ class TestGitRepository(TestCase):
         cls.origin = cls.temp / 'repos' / 'repo.git'
 
     def setUp(self):
-        self.config = Configuration('/etc/rehab.yml')
-        self.config.data = {
+        self.config = Configuration('/etc/rehab.yml', {
             'repodir': str(self.temp / 'repos'),
-        }
+        })
 
     @classmethod
     def tearDownClass(cls):
@@ -82,18 +81,20 @@ def test_repo_create_by_tag_proper_object():
     tools.assert_is_instance(repo, Repository)
 
 def test_repo_run_update_hooks_iterates_over_all_given_files():
-    conf = Configuration('conf')
-    conf.data.update({'updatehooks': {
-        'REPO': [('file.txt', 'echo file.txt has changed')],
-    }})
+    conf = Configuration('conf', {
+        'updatehooks': {
+            'REPO': [('file.txt', 'echo file.txt has changed')],
+        },
+    })
     repo = Repository('REPO', config=conf)
     repo.run_update_hooks()
 
 def test_repo_loop_iterates_over_repositories_from_config():
-    conf = Configuration('conf')
-    conf.data.update({'repositories': [
-        ('git', 'git@github.com:kvbik/python-baf.git', 'master'),
-    ]})
+    conf = Configuration('conf', {
+        'repositories': [
+            ('git', 'git@github.com:kvbik/python-baf.git', 'master'),
+        ],
+    })
     repo = list(Repository.loop(conf, {}))[0]
     tools.assert_is_instance(repo, Git)
     tools.assert_equals('git@github.com:kvbik/python-baf.git', repo.name)

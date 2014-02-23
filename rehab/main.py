@@ -3,7 +3,7 @@ from paver import tasks
 from paver.easy import cmdopts, path
 
 import rehab
-from rehab.configuration import Configuration
+from rehab.configuration import ConfigurationFile
 from rehab.repository import Repository
 
 def main(argv=None):
@@ -21,7 +21,7 @@ def main(argv=None):
 ])
 def update(options):
     "update repositories and run hooks there"
-    config = Configuration.parse(options)
+    config = ConfigurationFile.parse(options)
 
     for r in Repository.loop(config, options):
         r.update()

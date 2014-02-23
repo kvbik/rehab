@@ -5,7 +5,7 @@ import tempfile
 import yaml
 
 from rehab.main import main
-from rehab.configuration import Configuration
+from rehab.configuration import ConfigurationFile
 
 # basic rehab configuration, default values will be pretty similar
 EXAPMLE_CONFIG = {
@@ -52,7 +52,7 @@ def test_main_just_run_it_so_there_is_no_syntax_error():
     with open(name, 'w') as f:
         f.write(DUMMY_CONFIG)
 
-    Configuration._D['name'] = name
+    ConfigurationFile._D['name'] = name
 
     main(['rehab.py', 'update'])
 
@@ -61,6 +61,6 @@ def test_main_just_run_it_so_there_is_no_syntax_error():
     tools.assert_in("a-repo: '1'", f.read())
     f.close()
 
-    del Configuration._D['name']
+    del ConfigurationFile._D['name']
     temp.rmtree()
 
