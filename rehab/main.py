@@ -20,17 +20,20 @@ def main(argv=None):
 
 @cmdopts([
     ('config=', 'c', 'custom configuration file'),
+    ('data=', 'd', 'data file where previous versions are stored'),
 ])
 def update(options):
     "update repositories and run hooks there"
     config = ConfigurationFile.parse(options)
 
     for r in Repository.loop(config, options):
-        r.update()
-        r.run_update_hooks()
+        if config.do_update():
+            r.update()
+        if config.do_run():
+            r.run_update_hooks()
         config.set_previous_version(r.name, r.current_version)
 
-    config.dump()
+    config.save_data_file()
 
 if __name__ == '__main__':
     main()

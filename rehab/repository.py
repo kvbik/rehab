@@ -17,7 +17,7 @@ class Repository(object):
     @classmethod
     def loop(cls, config, options):
         "iterate through repositories from config"
-        for i in config.data.get('repositories', []):
+        for i in config.configuration.get('repositories', []):
             tag, name = i[:2]
             args = i[2:]
             yield cls.by_tag(tag, name, config, *args)

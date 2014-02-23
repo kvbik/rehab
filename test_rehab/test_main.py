@@ -5,7 +5,6 @@ from paver.easy import path
 import tempfile
 
 from rehab.main import main
-from rehab.configuration import ConfigurationFile
 
 from test_rehab.utils import RepositoryTesting
 
@@ -51,22 +50,22 @@ previous_versions:
 class TestMain(TestCase):
     def setUp(self):
         self.temp = path(tempfile.mkdtemp(prefix='test_rehab_'))
-        self.name = self.temp / 'rehab.yml'
-        with open(self.name, 'w') as f:
+        self.config_file = self.temp / 'rehab_config.yml'
+        self.data_file = self.temp / 'rehab_data.yml'
+
+        with open(self.config_file, 'w') as f:
             f.write(DUMMY_CONFIG)
 
-        ConfigurationFile._D['name'] = self.name
         RepositoryTesting.register()
 
     def test_main_just_run_it_so_there_is_no_syntax_error(self):
-        main(['rehab.py', 'update'])
+        main(['rehab.py', 'update', '-c', self.config_file, '-d', self.data_file])
 
         # previous commits has changed
-        with open(self.name) as f:
+        with open(self.data_file) as f:
             tools.assert_in("a-repo: '1'", f.read())
 
     def tearDown(self):
-        del ConfigurationFile._D['name']
         RepositoryTesting.unregister()
         self.temp.rmtree()
 

@@ -1,36 +1,62 @@
+import sys
+import copy
 import yaml
 from paver.easy import path
 
 class Configuration(object):
     "configuration wrapper"
-    _D = {}
+    def __init__(self, config_file=None, data_file=None, configuration=None):
+        self.configuration = copy.deepcopy(configuration) if configuration else {}
 
-    def __init__(self, name, data=None):
-        self.name = name
-        self.data = {} if data is None else data.copy()
+        self.config_file = config_file if config_file else self.default_config_file()
+        self.configuration.update(self.load_config_file())
 
-    @classmethod
-    def default(cls):
-        # FIXME: use venv as default and fallback to /etc/
-        return cls._D.get('name', '/etc/rehab.yml')
+        self.data_file = data_file if data_file else self.get_data_file()
+        self.data = self.load_data_file()
+
+    def is_virtualenv(self):
+        # FIXME: detect venv
+        return False
+
+    def default_config_file(self):
+        if self.is_virtualenv():
+            return path(sys.prefix) / 'rehab-config.yml'
+        return '/etc/rehab.yml'
+
+    def get_data_file(self):
+        data_file = self.configuration.get('data_file')
+        if data_file:
+            return data_file
+        if self.is_virtualenv():
+            return path(sys.prefix) / 'rehab-data.yml'
+        return '/var/rehab/'
 
     @classmethod
     def parse(cls, options):
         "parse command line options and load configuration"
-        name = options.get('config', cls.default())
-        config = cls(name)
-        config.load()
+        config_file = options.get('config')
+        data_file = options.get('data')
+        config = cls(config_file, data_file)
         return config
 
-    def load(self):
-        pass
+    def load_config_file(self):
+        return {}
+
+    def load_data_file(self):
+        return {}
+
+    def do_update(self):
+        return True
+
+    def do_run(self):
+        return True
 
     @property
     def repodir(self):
-        return path(self.data['repodir'])
+        return path(self.configuration['repodir'])
 
     def get_updatehooks(self, name):
-        updatehooks = self.data['updatehooks']
+        updatehooks = self.configuration['updatehooks']
         return updatehooks.get(name, [])
 
     def get_previous_version(self, name):
@@ -44,13 +70,23 @@ class Configuration(object):
 class ConfigurationFile(Configuration):
     "configuration wrapper that can store data in file"
 
-    def load(self):
-        with open(self.name) as f:
+    def load_yaml(self, file_name):
+        d = {}
+        file_name = path(file_name)
+        if not file_name.exists():
+            return d
+        with open(file_name) as f:
             d = yaml.load(f.read())
-            self.data.update(d)
+        return d
 
-    def dump(self):
-        with open(self.name, 'w') as f:
+    def load_config_file(self):
+        return self.load_yaml(self.config_file)
+
+    def load_data_file(self):
+        return self.load_yaml(self.config_file)
+
+    def save_data_file(self):
+        with open(self.data_file, 'w') as f:
             d = yaml.dump(self.data)
             f.write(d)
 

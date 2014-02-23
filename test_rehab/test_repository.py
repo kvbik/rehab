@@ -25,7 +25,7 @@ class TestGitRepository(TestCase):
         cls.origin = cls.temp / 'repos' / 'repo.git'
 
     def setUp(self):
-        self.config = Configuration('/etc/rehab.yml', {
+        self.config = Configuration(configuration={
             'repodir': str(self.temp / 'repos'),
         })
 
@@ -73,7 +73,7 @@ class TestGitRepository(TestCase):
 
 class TestBaseRepository(TestCase):
     def setUp(self):
-        self.config = Configuration('conf', {'repodir': '/var/repos'})
+        self.config = Configuration(configuration={'repodir': '/var/repos'})
 
     def test_repo_object_and_its_properties(self):
         repo = Repository('name', config=self.config)
@@ -86,7 +86,7 @@ class TestBaseRepository(TestCase):
         tools.assert_is_instance(repo, Repository)
 
     def test_repo_run_update_hooks_iterates_over_all_given_files(self):
-        conf = Configuration('conf', {
+        conf = Configuration(configuration={
             'repodir': '/var/repos',
             'updatehooks': {
                 'REPO': [('file.txt', 'echo file.txt has changed')],
@@ -97,7 +97,7 @@ class TestBaseRepository(TestCase):
         tools.assert_equals(['echo file.txt has changed'], repo.commands)
 
     def test_repo_loop_iterates_over_repositories_from_config(self):
-        conf = Configuration('conf', {
+        conf = Configuration(configuration={
             'repodir': '/var/repos',
             'repositories': [
                 ('git', 'git@github.com:kvbik/rehab.git', 'master'),
