@@ -14,6 +14,8 @@ def main(argv=None):
         pavement = path(rehab.__file__).dirname() / 'main.py'
         args = ['-f', pavement] + argv[1:]
 
+    if len(args) == 2:
+        args.append('help')
     tasks.main(args)
 
 @cmdopts([
