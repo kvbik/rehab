@@ -43,8 +43,7 @@ class ConfigurationFile(Configuration):
         self.data.update(self.load_data_file())
 
     def is_virtualenv(self):
-        # FIXME: detect venv
-        return False
+        return hasattr(sys, 'real_prefix')
 
     def default_config_file(self):
         if self.is_virtualenv():

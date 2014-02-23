@@ -1,6 +1,7 @@
 from nose import tools
 from unittest import TestCase
 
+import sys
 from paver.easy import path
 import tempfile
 
@@ -55,6 +56,7 @@ class TestMain(TestCase):
         self.config_file = self.temp / 'rehab_config.yml'
         self.data_file = self.temp / 'rehab_data.yml'
 
+        self.cmd_line = ['rehab.py', 'update', '-c', self.config_file, '-d', self.data_file]
         with open(self.config_file, 'w') as f:
             f.write(CONFIG)
         with open(self.data_file, 'w') as f:
@@ -62,14 +64,24 @@ class TestMain(TestCase):
 
         RepositoryTesting.register()
 
-    def test_main_just_run_it_so_there_is_no_syntax_error(self):
-        main(['rehab.py', 'update', '-c', self.config_file, '-d', self.data_file])
+        self.argv = sys.argv
 
+    def _test_main_just_run_it_so_there_is_no_syntax_error(self):
         # previous commits has changed
         with open(self.data_file) as f:
             tools.assert_in("a-repo: '1'", f.read())
 
+    def test_main_just_run_it_so_there_is_no_syntax_error(self):
+        main(self.cmd_line)
+        self._test_main_just_run_it_so_there_is_no_syntax_error()
+
+    def test_main_just_run_it_so_there_is_no_syntax_error_with_argv(self):
+        sys.argv = self.cmd_line
+        main()
+        self._test_main_just_run_it_so_there_is_no_syntax_error()
+
     def tearDown(self):
+        sys.argv = self.argv
         RepositoryTesting.unregister()
         self.temp.rmtree()
 
