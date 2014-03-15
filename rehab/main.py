@@ -34,7 +34,7 @@ def update(options):
             print(x)
             print('='*len(x))
             print(o if o else '.. not changed')
-            print()
+            print('')
 
     for r in Repository.loop(config, options):
         if config.do_update():
