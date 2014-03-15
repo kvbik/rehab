@@ -29,7 +29,7 @@ class Configuration(object):
 
     def set_previous_version(self, name, current_version):
         self.data.setdefault('previous_versions', {})
-        self.data['previous_versions'][name] = current_version
+        self.data['previous_versions'][name] = str(current_version)
 
 class ConfigurationFile(Configuration):
     "configuration wrapper that can store data in file"
