@@ -1,4 +1,6 @@
 /rehab.egg-info/
 /htmlcov/
 /.coverage
+/dist/
+/vim.sh
 *.py[co]

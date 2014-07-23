@@ -28,6 +28,7 @@ setup(
     url='https://github.com/kvbik/rehab',
     packages=find_packages(),
     entry_points={'console_scripts': ['rehab = rehab.main:main']},
+    test_suite='nose.collector',
     install_requires=install_requires,
     include_package_data=True,
     zip_safe=False,
